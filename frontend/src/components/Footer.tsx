@@ -42,10 +42,7 @@ export const Footer: React.FC = () => {
 
         </div>
 
-        <div className="pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-slate-500 font-mono">
-          <p>© 2026 Priority-Aware Elevator Disk Scheduler Simulator. Built for Operating Systems Coursework.</p>
-          <p>SCAN + Adaptive Burst-Throttling Architecture</p>
-        </div>
+        
 
       </div>
     </footer>

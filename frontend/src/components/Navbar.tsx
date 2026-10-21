@@ -44,9 +44,6 @@ export const Navbar: React.FC<NavbarProps> = ({ onRunClick }) => {
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-lg text-white tracking-wide">SCAN</span>
-                <span className="text-xs font-semibold px-2 py-0.5 rounded-full bg-cyan-500/10 text-cyan-400 border border-cyan-500/20">
-                  OPTIMIZER v2.0
-                </span>
               </div>
               <p className="text-[10px] text-slate-400 font-mono tracking-wider">PRIORITY-AWARE DISK SCHEDULER</p>
             </div>

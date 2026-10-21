@@ -12,13 +12,15 @@ The project is implemented as a **frontend-based simulation without request arri
 
 ## Run Locally
 
-The frontend application and its Vite configuration live in `frontend/`. From the project root, install dependencies and start the development server with:
+The frontend application and its Vite configuration live in `frontend/`. The SCAN scheduling algorithms are implemented in C++ and compiled to WebAssembly for the browser. Install [Emscripten](https://emscripten.org/docs/getting_started/downloads.html) and Node.js, then from the project root install dependencies and start the development server:
 
 ```bash
 cd frontend
 npm install
 npm run dev
 ```
+
+The `dev` and `build` scripts compile `src/cpp/disk_scheduler.cpp` to a Vite-imported module in `src/generated/` and the WebAssembly binary in `public/` before starting/building the website. The React interface stays the same; its TypeScript simulation layer calls the compiled module.
 
 Open the local URL printed in the terminal, usually `http://localhost:5173`.
 
@@ -36,8 +38,10 @@ frontend/
   index.html
   public/       Static files
   src/
-    algorithms/ Disk scheduling algorithms
+    algorithms/ TypeScript bridge to the compiled scheduler
     components/ React UI components
+    cpp/        C++ disk scheduling algorithms
+    generated/  Generated WebAssembly module bindings
     utils/      Simulation and validation helpers
     types/      TypeScript types
   package.json
@@ -52,6 +56,7 @@ README.md
 
 - React
 - TypeScript
+- C++ compiled to WebAssembly with Emscripten
 - Vite
 - Tailwind CSS
 - Recharts

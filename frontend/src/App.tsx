@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { SimulationParams, DiskRequest, SimulationComparison } from './types';
 import { DEFAULT_SIMULATION_PARAMS, DEFAULT_DISK_REQUESTS } from './utils/presetData';
 import { runFullSimulation } from './utils/simulation';
-import confetti from 'canvas-confetti';
 
 // Components
 import { Navbar } from './components/Navbar';
@@ -23,30 +22,38 @@ export const App: React.FC = () => {
   const [requests, setRequests] = useState<DiskRequest[]>(DEFAULT_DISK_REQUESTS);
 
   // Initial Simulation Run
-  const [comparison, setComparison] = useState<SimulationComparison>(() => {
-    return runFullSimulation(DEFAULT_SIMULATION_PARAMS, DEFAULT_DISK_REQUESTS);
-  });
+  const [comparison, setComparison] = useState<SimulationComparison | null>(null);
+  const [simulationError, setSimulationError] = useState<string | null>(null);
 
-  const handleRunSimulation = () => {
-    const newResult = runFullSimulation(params, requests);
-    setComparison(newResult);
-
-    // Fire subtle celebration confetti
-    try {
-      confetti({
-        particleCount: 40,
-        spread: 60,
-        origin: { y: 0.8 },
-        colors: ['#72B0AB', '#CFB97E', '#BCDDDC']
+  useEffect(() => {
+    let active = true;
+    runFullSimulation(DEFAULT_SIMULATION_PARAMS, DEFAULT_DISK_REQUESTS)
+      .then(result => {
+        if (active) setComparison(result);
+      })
+      .catch(error => {
+        if (active) {
+          setSimulationError(error instanceof Error ? error.message : String(error));
+        }
       });
-    } catch (e) {
-      // Ignore if canvas-confetti unavailable
-    }
+    return () => {
+      active = false;
+    };
+  }, []);
 
-    // Smooth scroll to visualization section
-    const visEl = document.getElementById('visualization');
-    if (visEl) {
-      visEl.scrollIntoView({ behavior: 'smooth' });
+  const handleRunSimulation = async () => {
+    try {
+      const newResult = await runFullSimulation(params, requests);
+      setComparison(newResult);
+      setSimulationError(null);
+
+      // Smooth scroll to visualization section
+      const visEl = document.getElementById('visualization');
+      if (visEl) {
+        visEl.scrollIntoView({ behavior: 'smooth' });
+      }
+    } catch (error) {
+      setSimulationError(error instanceof Error ? error.message : String(error));
     }
   };
 
@@ -78,31 +85,45 @@ export const App: React.FC = () => {
         onRunSimulation={handleRunSimulation}
       />
 
-      {/* Disk Head Visualization */}
-      <DiskVisualization
-        standardScan={comparison.standardScan}
-        priorityScan={comparison.priorityScan}
-        params={comparison.params}
-      />
+      {simulationError && (
+        <p role="alert" className="mx-auto mt-4 max-w-7xl px-4 text-sm text-red-300">
+          The C++ scheduler could not run: {simulationError}
+        </p>
+      )}
+      {!comparison && !simulationError && (
+        <p role="status" className="mx-auto mt-4 max-w-7xl px-4 text-sm text-slate-300">
+          Loading the C++ scheduler...
+        </p>
+      )}
 
-      {/* Performance Analytics KPI Stats */}
-      <Results comparison={comparison} />
+      {comparison && (
+        <>
+          {/* Disk Head Visualization */}
+          <DiskVisualization
+            standardScan={comparison.standardScan}
+            priorityScan={comparison.priorityScan}
+            params={comparison.params}
+          />
 
-      {/* Comparison Table */}
-      <ComparisonTable comparison={comparison} />
+          {/* Performance Analytics KPI Stats */}
+          <Results comparison={comparison} />
 
-      {/* Comparison Charts */}
-      <ComparisonCharts comparison={comparison} />
+          {/* Comparison Table */}
+          <ComparisonTable comparison={comparison} />
 
-      {/* Request Analysis & Timeline */}
-      <RequestAnalysis comparison={comparison} />
+          {/* Comparison Charts */}
+          <ComparisonCharts comparison={comparison} />
 
-      {/* Dynamic Insights Summary */}
-      <DynamicInsights comparison={comparison} />
+          {/* Request Analysis & Timeline */}
+          <RequestAnalysis comparison={comparison} />
 
-      {/* How It Works Flowchart */}
-      <HowItWorks />
+          {/* Dynamic Insights Summary */}
+          <DynamicInsights comparison={comparison} />
 
+          {/* How It Works Flowchart */}
+          <HowItWorks />
+        </>
+      )}
       {/* Footer */}
       <Footer />
 

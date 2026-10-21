@@ -1,0 +1,22 @@
+{
+  "configurations": [
+    {
+      "name": "Emscripten",
+      "compilerPath": "/opt/homebrew/bin/em++",
+      "compilerArgs": ["-std=c++17"],
+      "defines": ["__EMSCRIPTEN__=1"],
+      "includePath": [
+        "${workspaceFolder}/**",
+        "/opt/homebrew/opt/emscripten/libexec/cache/sysroot/include",
+        "/opt/homebrew/opt/emscripten/libexec/cache/sysroot/include/compat",
+        "/opt/homebrew/opt/emscripten/libexec/cache/sysroot/include/fakesdl",
+        "/opt/homebrew/opt/emscripten/libexec/cache/sysroot/include/c++/v1",
+        "/opt/homebrew/opt/emscripten/libexec/llvm/lib/clang/24/include"
+      ],
+      "cStandard": "c17",
+      "cppStandard": "c++17",
+      "intelliSenseMode": "linux-clang-x64"
+    }
+  ],
+  "version": 4
+}

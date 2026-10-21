@@ -11,10 +11,14 @@ lerna-debug.log*
 **/dist/
 **/dist-ssr/
 *.local
+frontend/public/scheduler.wasm
+frontend/src/generated/scheduler.js
+frontend/src/generated/scheduler.wasm
 
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
+!.vscode/c_cpp_properties.json
 .idea
 .DS_Store
 *.suo

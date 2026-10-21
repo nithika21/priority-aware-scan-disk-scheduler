@@ -2,12 +2,14 @@ import type { DiskRequest, SimulationParams, SimulationComparison, AlgorithmResu
 import { runStandardScan } from '../algorithms/scan';
 import { runPriorityAwareScan } from '../algorithms/priorityScan';
 
-export function runFullSimulation(
+export async function runFullSimulation(
   params: SimulationParams,
   requests: DiskRequest[]
-): SimulationComparison {
-  const stdResult = runStandardScan(requests, params);
-  const prioResult = runPriorityAwareScan(requests, params);
+): Promise<SimulationComparison> {
+  const [stdResult, prioResult] = await Promise.all([
+    runStandardScan(requests, params),
+    runPriorityAwareScan(requests, params)
+  ]);
 
   // Differences (Priority - Standard)
   const headMovementDiff = prioResult.totalHeadMovement - stdResult.totalHeadMovement;

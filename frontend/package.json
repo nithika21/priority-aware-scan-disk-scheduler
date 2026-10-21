@@ -4,8 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
+    "predev": "npm run build:wasm",
     "dev": "vite",
+    "prebuild": "npm run build:wasm",
     "build": "tsc -b && vite build",
+    "build:wasm": "mkdir -p src/generated && em++ src/cpp/disk_scheduler.cpp -std=c++17 -O3 -lembind -s MODULARIZE=1 -s EXPORT_ES6=1 -s EXPORT_NAME=createDiskSchedulerModule -s ENVIRONMENT=web -s ALLOW_MEMORY_GROWTH=1 -s FILESYSTEM=0 -o src/generated/scheduler.js && cp src/generated/scheduler.wasm public/scheduler.wasm",
     "lint": "oxlint",
     "preview": "vite preview"
   },

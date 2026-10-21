@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowRight, Sparkles, CheckCircle2, Zap } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Zap } from 'lucide-react';
 
 interface HeroProps {
   onStartClick: () => void;
@@ -13,11 +13,6 @@ export const Hero: React.FC<HeroProps> = ({ onStartClick }) => {
           
           {/* Left Column: Text & CTAs */}
           <div className="lg:col-span-7 space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-900/80 border border-cyan-500/30 text-cyan-400 text-xs font-semibold tracking-wide shadow-inner">
-              <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-              <span>OPERATING SYSTEM ALGORITHM SIMULATOR</span>
-            </div>
-
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white tracking-tight leading-[1.1]">
               Smarter Disk Scheduling.{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-400 to-indigo-400">
@@ -107,10 +102,6 @@ export const Hero: React.FC<HeroProps> = ({ onStartClick }) => {
                     strokeWidth="3.5" 
                     strokeLinecap="round"
                   />
-
-                  {/* Throttle burst icon point */}
-                  <circle cx="290" cy="90" r="14" fill="#CFB97E" fillOpacity="0.2" stroke="#CFB97E" strokeWidth="1.5" className="animate-ping" />
-                  <circle cx="290" cy="90" r="6" fill="#CFB97E" stroke="#FFEDD1" strokeWidth="2" />
 
                   {/* Request Nodes */}
                   {/* Head Start */}
