@@ -7,24 +7,25 @@
 #include <vector>
 
 using emscripten::val;
+using std::string;
 
 namespace {
 
 struct Request {
-  std::string id;
+  string id;
   int cylinder;
-  std::string priority;
+  string priority;
 };
 
 struct Step {
   int number;
-  std::string requestId;
+  string requestId;
   int cylinder;
-  std::string direction;
+  string direction;
   double seekDistance;
   double cumulativeMovement;
   double waitTime;
-  std::string priority;
+  string priority;
   bool hasPriority = false;
   bool throttled = false;
   bool boundaryReversal = false;
@@ -32,24 +33,24 @@ struct Step {
 };
 
 struct Detail {
-  std::string id;
+  string id;
   int cylinder;
-  std::string priority;
+  string priority;
   int serviceOrderIndex;
   double waitTime;
   double seekDistance;
-  std::string status;
+  string status;
 };
 
 struct Result {
-  std::string algorithmName;
-  std::vector<std::string> serviceOrder;
+  string algorithmName;
+  std::vector<string> serviceOrder;
   std::vector<Step> trace;
   std::vector<Detail> requestDetails;
   double totalHeadMovement = 0;
   double averageWaitTime = 0;
   double maxWaitTime = 0;
-  std::string maxWaitRequestId = "N/A";
+  string maxWaitRequestId = "N/A";
   double averageSeekDistance = 0;
   int directionChanges = 0;
   int throttlingEvents = 0;
@@ -58,7 +59,7 @@ struct Result {
   int starvedRequestsCount = 0;
 };
 
-int priorityScore(const std::string& priority) {
+int priorityScore(const string& priority) {
   if (priority == "HIGH") return 3;
   if (priority == "MEDIUM") return 2;
   return 1;
@@ -134,16 +135,16 @@ std::vector<Request> readRequests(const val& input) {
   for (unsigned i = 0; i < count; ++i) {
     const val item = input[i];
     requests.push_back({
-      item["id"].as<std::string>(),
+      item["id"].as<string>(),
       item["cylinder"].as<int>(),
-      item["priority"].as<std::string>()
+      item["priority"].as<string>()
     });
   }
   return requests;
 }
 
-Result makeEmptyResult(const std::string& name, int initialHead,
-                       const std::string& direction) {
+Result makeEmptyResult(const string& name, int initialHead,
+                       const string& direction) {
   Result result;
   result.algorithmName = name;
   result.maxWaitRequestId = "None";
@@ -152,7 +153,7 @@ Result makeEmptyResult(const std::string& name, int initialHead,
 }
 
 void appendService(Result& result, const Request& request, int& currentHead,
-                   const std::string& direction, int& stepNumber,
+                   const string& direction, int& stepNumber,
                    bool throttled = false, bool includeThrottleField = false) {
   const double seek = std::abs(request.cylinder - currentHead);
   result.totalHeadMovement += seek;
@@ -172,7 +173,7 @@ void appendService(Result& result, const Request& request, int& currentHead,
 }
 
 void appendBoundary(Result& result, int boundary, int& currentHead,
-                    const std::string& direction, int& stepNumber) {
+                    const string& direction, int& stepNumber) {
   const double seek = std::abs(boundary - currentHead);
   result.totalHeadMovement += seek;
   currentHead = boundary;
@@ -231,7 +232,7 @@ void calculateMetrics(Result& result, const std::vector<Request>& requests,
 Result runStandard(const std::vector<Request>& requests, const val& params) {
   const int diskSize = params["diskSize"].as<int>();
   int currentHead = params["initialHead"].as<int>();
-  std::string direction = params["direction"].as<std::string>();
+  string direction = params["direction"].as<string>();
   const int maxCylinder = std::max(0, diskSize - 1);
   Result result = makeEmptyResult("Standard SCAN", currentHead, direction);
   if (requests.empty()) return result;
@@ -279,7 +280,7 @@ Result runStandard(const std::vector<Request>& requests, const val& params) {
 Result runPriorityAware(const std::vector<Request>& requests, const val& params) {
   const int diskSize = params["diskSize"].as<int>();
   int currentHead = params["initialHead"].as<int>();
-  std::string direction = params["direction"].as<std::string>();
+  string direction = params["direction"].as<string>();
   const int burstLimit = params["burstLimit"].as<int>();
   const int maxCylinder = std::max(0, diskSize - 1);
   Result result = makeEmptyResult(
